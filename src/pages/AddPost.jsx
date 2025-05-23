@@ -1,8 +1,9 @@
 import React from "react";
+import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-export default function AddPost({ initialData, onSubmit }) {
+export default function AddPost({ initialData}) {
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
     content: Yup.string().required("Content is required"),
@@ -10,21 +11,45 @@ export default function AddPost({ initialData, onSubmit }) {
   });
 
   return (
-    <Formik
-      initialValues={{
-        title: initialData?.title || "",
-        content: initialData?.content || "",
-        image: null,
-      }}
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        const formData = new FormData();
-        formData.append("title", values.title);
-        formData.append("content", values.content);
-        if (values.image) formData.append("image", values.image);
-        onSubmit(formData);
-      }}
-    >
+<Formik
+  initialValues={{
+    title: initialData?.title || "",
+    content: initialData?.content || "",
+    image: null,
+  }}
+  validationSchema={validationSchema}
+  onSubmit={async (values, ) => {
+    const formData = new FormData();
+    formData.append("title", values.title);
+    formData.append("content", values.content);
+    if (values.image) {
+      formData.append("image", values.image);
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/posts/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    
+      console.log("Upload success:", response.data);
+    } catch (error) {
+      if (error.response) {
+        
+        console.error("Upload failed with status:", error.response.status);
+        console.error("Error response data:", error.response.data); // Validation errors, etc.
+      } else if (error.request) {
+       
+        console.error("No response received:", error.request);
+      } else {
+       
+        console.error("Error setting up the request:", error.message);
+      }
+    }}}
+    
+>
+
       {({ setFieldValue }) => (
         <Form className="space-y-6 max-w-3xl mx-auto p-6">
           {/* Title */}

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
-export default function EditPost({ initialData, onSubmit }) {
+function EditPost({ initialData, onSubmit }) {
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
     content: Yup.string().required("Content is required"),
@@ -11,6 +12,7 @@ export default function EditPost({ initialData, onSubmit }) {
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         title: initialData?.title || "",
         content: initialData?.content || "",
@@ -81,4 +83,43 @@ export default function EditPost({ initialData, onSubmit }) {
       )}
     </Formik>
   );
+}
+
+export default function EditPostPage({ postId }) {
+  const [initialData, setInitialData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    axios
+      .get(`/posts/${postId}/`)
+      .then((res) => {
+        setInitialData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching post:", err);
+        setLoading(false);
+      });
+  }, [postId]);
+
+  const handleUpdate = (formData) => {
+    axios
+      .put(`/posts/${postId}/`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(() => {
+        alert("Post updated successfully!");
+        // You can add redirect or UI updates here
+      })
+      .catch((err) => {
+        console.error("Update failed:", err);
+        alert("Failed to update post.");
+      });
+  };
+
+  if (loading) return <p>Loading...</p>;
+
+  return <EditPost initialData={initialData} onSubmit={handleUpdate} />;
 }

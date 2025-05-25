@@ -1,13 +1,24 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 // Define the validation schema using Yup
 const validationSchema = Yup.object({
+  firstName: Yup.string()
+    .min(2, 'First name must be at least 2 characters')
+    .max(50, 'First name must be at most 50 characters')
+    .required('First name is required'),
+  lastName: Yup.string()
+    .min(2, 'Last name must be at least 2 characters')
+    .max(50, 'Last name must be at most 50 characters')
+    .required('Last name is required'),
   email: Yup.string()
     .email('Invalid email address')
     .required('Email is required'),
-    username: Yup.string()
+  username: Yup.string()
     .min(3, 'Username must be at least 3 characters')
     .max(20, 'Username must be at most 20 characters')
     .required('Username is required'),
@@ -21,12 +32,22 @@ const validationSchema = Yup.object({
 
 // Initial form values
 const initialValues = {
+  firstName: '',
+  lastName: '',
   email: '',
+  username: '',
   password: '',
   confirmPassword: '',
 };
 
 const Signup = () => {
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/'); // Redirect to home
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-md bg-base-100 shadow-xl">
@@ -37,15 +58,81 @@ const Signup = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                console.log('Form submitted:', values);
+            onSubmit={async(values, { setSubmitting, resetForm, setErrors }) => {
+              const { firstName, lastName, email, username, password, confirmPassword } = values;
+
+              const payload = {
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                username,
+                password,
+                confirm_password: confirmPassword,
+              };
+
+              try {
+                 await axios.post('http://localhost:8000/posts/author/register/',payload, {
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                });
+                
+                resetForm();
+                setShowModal(true); 
+              } catch (error) {
+                // Handle error responses
+                if (error.response && error.response.data) {
+                  // Assuming API sends validation errors as key:value pairs
+                  setErrors(error.response.data);
+                } else {
+                  alert('Something went wrong. Please try again later.');
+                }
+                console.error('Error during registration:', error);
+              } finally {
                 setSubmitting(false);
-              }, 1000);
+              }
+            
             }}
+            
           >
             {({ isSubmitting }) => (
               <Form className="space-y-4">
+                {/* First Name Field */}
+                <div className="form-control">
+                  <label className="label" htmlFor="firstName">
+                    <span className="label-text">First Name</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="firstName"
+                    className="input input-bordered w-full"
+                    placeholder="Enter your first name"
+                  />
+                  <ErrorMessage
+                    name="firstName"
+                    component="div"
+                    className="text-error text-sm mt-1"
+                  />
+                </div>
+
+                {/* Last Name Field */}
+                <div className="form-control">
+                  <label className="label" htmlFor="lastName">
+                    <span className="label-text">Last Name</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="lastName"
+                    className="input input-bordered w-full"
+                    placeholder="Enter your last name"
+                  />
+                  <ErrorMessage
+                    name="lastName"
+                    component="div"
+                    className="text-error text-sm mt-1"
+                  />
+                </div>
+
                 {/* Email Field */}
                 <div className="form-control">
                   <label className="label" htmlFor="email">
@@ -62,23 +149,24 @@ const Signup = () => {
                     component="div"
                     className="text-error text-sm mt-1"
                   />
-                   {/* Username Field */}
                 </div>
+
+                {/* Username Field */}
                 <div className="form-control">
-                    <label className="label" htmlFor="username">
-                        <span className="label-text">Username</span>
-                    </label>
-                    <Field
-                        type="text"
-                        name="username"
-                        className="input input-bordered w-full"
-                        placeholder="Enter your username"
-                    />
-                    <ErrorMessage
-                        name="username"
-                        component="div"
-                        className="text-error text-sm mt-1"
-                    />
+                  <label className="label" htmlFor="username">
+                    <span className="label-text">Username</span>
+                  </label>
+                  <Field
+                    type="text"
+                    name="username"
+                    className="input input-bordered w-full"
+                    placeholder="Enter your username"
+                  />
+                  <ErrorMessage
+                    name="username"
+                    component="div"
+                    className="text-error text-sm mt-1"
+                  />
                 </div>
 
                 {/* Password Field */}
@@ -136,7 +224,24 @@ const Signup = () => {
           </Formik>
         </div>
       </div>
+      {showModal && (
+          <dialog open className="modal modal-open">
+            <div className="modal-box">
+              <h3 className="font-bold text-lg">Registration Successful!</h3>
+              <p className="py-4">
+              👋 Welcome to <strong>Maktoob</strong> 🎉<br />
+              Where code meets calligraphy, and every line is <em>مكتوب</em>.<br />
+              From Cairo to the cloud, your story compiles here.<br />
+              Search, sync, and store your destiny—bit by byte.
+            </p>
+              <div className="modal-action">
+                <button className="btn btn-primary" onClick={handleCloseModal}>Continue</button>
+              </div>
+            </div>
+          </dialog>
+        )}
     </div>
+
   );
 };
 

@@ -11,11 +11,8 @@ export default function BlogMenu() {
   const [currentUserId, setCurrentUserId] = useState(null);
 
   useEffect(() => {
-    // Set current username when component mounts
     const id = getCurrentUserId();
     setCurrentUserId(id);
-    
-    // Fetch posts
     fetchPosts();
   }, []);
 
@@ -23,7 +20,7 @@ export default function BlogMenu() {
     setLoading(true);
     try {
       const response = await axios.get('http://localhost:8000/posts/');
-      console.log("API Response:", response.data); // Debugging
+      console.log("API Response:", response.data);
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -66,46 +63,46 @@ export default function BlogMenu() {
     <section className="py-12 px-6 bg-base-200">
       <h2 className="text-3xl font-bold text-center mb-8">Latest Blogs</h2>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {posts.map((post) => {
-          // Debug logging
-          console.log(
-            `Post ID: ${post.id}`,
-            `Post Author:`, post.author,
-            `Post Author ID:`, post.author.id,
-            `Current User:`, currentUserId,
-            `Ownership Match:`, currentUserId && post.author?.id === currentUserId
-          );
+      {posts.map((post) => (
+  <div
+    key={post.id}
+    className="card bg-base-100 shadow-md hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-1"
+  >
+    <Link to={`/posts/${post.id}`} className="cursor-pointer">
+      <figure className="overflow-hidden h-48">
+        <img
+          src={post.image}
+          alt={post.title}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+        />
+      </figure>
+      <div className="card-body">
+      <h3 className="card-title text-lg text-white group-hover:text-primary-focus transition-colors duration-200">
+  {post.title}
+</h3>
 
-          return (
-            <div key={post.id} className="card bg-base-100 shadow-xl">
-              <figure>
-                <img src={post.image} alt={post.title} className="w-full h-48 object-cover" />
-              </figure>
-              <div className="card-body">
-                <h3 className="card-title">{post.title}</h3>
-                <p>{post.description}</p>
-                <div className="card-actions justify-between">
-                  {currentUserId && currentUserId === post.author.id && (
-                    <div className="flex gap-2">
-                      <Link to={`/edit-post/${post.id}`}>
-                        <button className="btn btn-outline btn-accent btn-sm">Edit</button>
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteClick(post.id)}
-                        className="btn btn-outline btn-error btn-sm"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+       
+      </div>
+    </Link>
+
+    {currentUserId && currentUserId === post.author.id && (
+      <div className="px-4 pb-4 flex justify-end gap-2">
+        <Link to={`/edit-post/${post.id}`}>
+          <button className="btn btn-outline btn-accent btn-sm">Edit</button>
+        </Link>
+        <button
+          onClick={() => handleDeleteClick(post.id)}
+          className="btn btn-outline btn-error btn-sm"
+        >
+          Delete
+        </button>
+      </div>
+    )}
+  </div>
+))}
+
       </div>
 
-      {/* Delete Confirmation Modal */}
       {showModal && (
         <dialog key="delete-modal" className="modal modal-open">
           <div className="modal-box">

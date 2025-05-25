@@ -1,19 +1,25 @@
-import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { getAccessToken, clearTokens } from '../utils/authService';
-// import { get } from 'mongoose';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const isLoggedIn = !!getAccessToken();
   const token = getAccessToken();
-  // Assuming you have a way to get the current user's name
+  const [searchTerm, setSearchTerm] = useState('');
+
   const currentUser = token ? JSON.parse(atob(token.split('.')[1])) : null;
-  
-const fullName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'User';
+  const fullName = currentUser ? `${currentUser.first_name} ${currentUser.last_name}` : 'User';
+
   const handleLogout = () => {
     clearTokens();
     navigate('/login');
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      navigate(`/search?query=${encodeURIComponent(searchTerm)}`);
+    }
   };
 
   return (
@@ -71,17 +77,30 @@ const fullName = currentUser ? `${currentUser.first_name} ${currentUser.last_nam
       </div>
       
       <div className="navbar-end">
+        <div className="form-control mr-4">
+          <input
+            type="text"
+            placeholder="Search posts..."
+            className="input input-bordered"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+          />
+        </div>
+
         {isLoggedIn && (
-          <div className=" md:flex items-center gap-2 mr-4">
+          <div className="md:flex items-center gap-2 mr-4">
             <span className="font-semibold text-white-700">Welcome,</span>
             <span className="font-semibold">{fullName}</span>
           </div>
         )}
-        <button className="btn btn-ghost btn-circle">
+
+        {/* <button className="btn btn-ghost btn-circle">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /> 
           </svg>
         </button>
+
         <button className="btn btn-ghost btn-circle">
           <div className="indicator">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> 
@@ -89,7 +108,7 @@ const fullName = currentUser ? `${currentUser.first_name} ${currentUser.last_nam
             </svg>
             <span className="badge badge-xs badge-primary indicator-item"></span>
           </div>
-        </button>
+        </button> */}
       </div>
     </div>
   );

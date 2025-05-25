@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { getAccessToken } from "../utils/authService"; // Adjust the import path as necessary
 
 export default function AddPost({ initialData}) {
   const validationSchema = Yup.object({
@@ -25,11 +26,13 @@ export default function AddPost({ initialData}) {
     if (values.image) {
       formData.append("image", values.image);
     }
-
+    const token = getAccessToken();
+    console.log("Access token:", token); 
     try {
-      const response = await axios.post('http://localhost:8000/posts/', formData, {
+      const response = await axios.post('http://localhost:8000/posts/create/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
         },
       });
     

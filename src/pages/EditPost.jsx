@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useParams } from 'react-router-dom';
 
 function EditPost({ initialData, onSubmit }) {
+  
+  // Removed unused postId
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
     content: Yup.string().required("Content is required"),
@@ -85,13 +88,14 @@ function EditPost({ initialData, onSubmit }) {
   );
 }
 
-export default function EditPostPage({ postId }) {
+export default function EditPostPage() {
   const [initialData, setInitialData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const { postId } = useParams();
   useEffect(() => {
+    if (!postId) return;
     axios
-      .get(`/posts/${postId}/`)
+      .get(`http://localhost:8000/posts/${postId}/`)
       .then((res) => {
         setInitialData(res.data);
         setLoading(false);
@@ -104,7 +108,7 @@ export default function EditPostPage({ postId }) {
 
   const handleUpdate = (formData) => {
     axios
-      .put(`/posts/${postId}/`, formData, {
+      .put(`http://localhost:8000/posts/${postId}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

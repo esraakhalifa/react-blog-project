@@ -10,17 +10,17 @@ export default function Hero() {
   }}
 >
 
-  <div className="hero-overlay"></div>
-  <div className="hero-content text-neutral-content text-center">
-    <div className="max-w-md">
-      <h1 className="mb-5 text-5xl font-bold">Hello there</h1>
-      <p className="mb-5">
-        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-        quasi. In deleniti eaque aut repudiandae et a id nisi.
-      </p>
-      <button className="btn btn-primary">Get Started</button>
-    </div>
+<div className="hero-overlay"></div>
+<div className="hero-content text-neutral-content text-center">
+  <div className="max-w-md">
+    <h1 className="mb-5 text-5xl font-bold">Welcome to Maktoob</h1>
+    <p className="mb-5 text-lg">
+      Where every keystroke counts, and every click carves a story.<br />
+      Your story. Your stack. Your script.
+    </p>
+    <button className="btn btn-primary">Get Started</button>
   </div>
+</div>
 </div>
   )
 }

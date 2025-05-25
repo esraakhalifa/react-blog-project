@@ -18,7 +18,6 @@ export default function Hero() {
       Where every keystroke counts, and every click carves a story.<br />
       Your story. Your stack. Your script.
     </p>
-    <button className="btn btn-primary">Get Started</button>
   </div>
 </div>
 </div>

@@ -1,0 +1,11 @@
+{
+    "login_success_title": "Login Successful!",
+    "login_success_message": "🔐 Welcome back to <strong>Maktoob</strong><br />Access your journey, where every session writes a new line.<br />Log in, sync your path, and continue where destiny left off.",
+  
+    "registration_success_title": "Registration Successful!",
+    "registration_success_message": "👋 Welcome to <strong>Maktoob</strong> 🎉<br />Where code meets calligraphy, and every line is <em>مكتوب</em>.<br />From Cairo to the cloud, your story compiles here.<br />Search, sync, and store your destiny—bit by byte.",
+  
+    "home_welcome_title": "Welcome to Maktoob",
+    "home_welcome_message": "Where every keystroke counts, and every click carves a story.<br />Your story. Your stack. Your script."
+  }
+  

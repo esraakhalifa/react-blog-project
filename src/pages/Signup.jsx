@@ -3,7 +3,8 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 // Define the validation schema using Yup
 const validationSchema = Yup.object({
@@ -47,7 +48,21 @@ const Signup = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     navigate('/'); // Redirect to home
+
   };
+  const { t, i18n } = useTranslation();
+
+  // const changeLanguage = (lng) => {
+  //   i18n.changeLanguage(lng);
+  // };
+
+  // Handle RTL
+  useEffect(() => {
+    const dir = i18n.language === "ar" ? "rtl" : "ltr";
+    document.documentElement.dir = dir;
+    document.documentElement.lang = i18n.language;
+  }, [i18n.language]);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-md bg-base-100 shadow-xl">
@@ -227,13 +242,9 @@ const Signup = () => {
       {showModal && (
           <dialog open className="modal modal-open">
             <div className="modal-box">
-              <h3 className="font-bold text-lg">Registration Successful!</h3>
-              <p className="py-4">
-              👋 Welcome to <strong>Maktoob</strong> 🎉<br />
-              Where code meets calligraphy, and every line is <em>مكتوب</em>.<br />
-              From Cairo to the cloud, your story compiles here.<br />
-              Search, sync, and store your destiny—bit by byte.
-            </p>
+            <h3 className="font-bold text-lg">{t("registration_success_title")}</h3>
+              <p className="py-4" dangerouslySetInnerHTML={{ __html: t("registration_success_message") }}></p>
+
               <div className="modal-action">
                 <button className="btn btn-primary" onClick={handleCloseModal}>Continue</button>
               </div>

@@ -9,8 +9,10 @@ import Signup from './pages/Signup'
 import EditPost from './pages/EditPost'
 import AddPost from './pages/AddPost'
 import PostDetails from './pages/PostDetails'
+import NotFound from './pages/NotFound'
 
 function App() {
+ 
   return (
     <>
       <BrowserRouter>
@@ -23,6 +25,7 @@ function App() {
           <Route path="/add-post" element={<AddPost />} />
           <Route path="/search" element={<SearchResults />} />
           <Route path="/posts/:postId" element={<PostDetails />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </BrowserRouter>
